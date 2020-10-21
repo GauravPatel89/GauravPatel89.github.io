@@ -26,7 +26,38 @@ For complete list of limits see this [link](https://docs.aws.amazon.com/lambda/l
 
 There are number of options for function deployment on AWS Lambda. It can be done using AWS Lambda [GUI interface](https://docs.aws.amazon.com/lambda/latest/dg/getting-started.html), [AWS Serverless Application Model(SAM)](https://lumigo.io/aws-serverless-ecosystem/aws-serverless-application-model/),[Serverless](https://www.serverless.com/), [Terraform](https://lumigo.io/aws-lambda-deployment/aws-lambda-terraform/) and many more. Check this [list](https://lumigo.io/aws-lambda-deployment/) for more information.
 
-We used Serverless framework for Lambda Deployment. Basic procedure 
+We used Serverless framework for Lambda Deployment. Serverless framework installation and an example deployment of a PyTorch model is explained in detail in this [blog](https://towardsdatascience.com/scaling-machine-learning-from-zero-to-hero-d63796442526).
+
+#### Procedure in Short
+
+1. Create an empty serverless package.  
+Create an empty serverless package with aws-python3 as a template. This will create a 'example-lambda-function-name' directory with configuration file 'serverless.yaml', and python file handler.py
+
+
+        serverless create --template aws-python3 --path example-lambda-function-name
+        
+2. Install serverless-python-requirements plugin in your package.  
+cd into your package directory and execute command given below to install serverless-python-requirements plugin in your package. This will add few more configuration files to your package.
+
+        serverless plugin install -n serverless-python-requirements
+
+3. Add requirements to requirements.txt  
+Add a file named 'requirements.txt' in your package directory. In this file, list out python packages required to run your deployed function.
+
+4. Edit serverless.yml  
+Edit serverless.yml file for necessary AWS S3 configurations. Add configuration settings for 'serverless-python-requirements' to reduce deployment package size. Please refer this [blog](https://towardsdatascience.com/scaling-machine-learning-from-zero-to-hero-d63796442526) for detailed procedure.
+
+5. Deploy package  
+Deploy your package using following. 
+
+      servrless deploy
+      
+On executing this command serverless will take a AWS Lambda compatible docker image, 'pip' install python packages mentioned in 'requirements.txt' and compress these into a package **.requirements.zip** then again compress this as part of another anothe zip file containing other necessary package files like handler.py. It also adds a file in your deployment package **unzip_requirements.py**. This file is executed at the beginning of your Lambda function to unzip the compressed python packages in **.requirements.zip** into user directory and adds its path into system path. Finally serverless will deploy your package onto AWS lambda and show its url. 
+
+### The Problem
+
+Although serverless framework made deployment task very easy for us but we faced one irritating issue.  Most of our assignment deployments were on PyTorch framework, so in all of our deployments we were using PyTorch and torchvision packages. Now with just these two packages (and their dependencies) as part of lambda deployment, the deployment package size was coming out to be ~140 MB. Irritating part was each time there is any change in any of the file and we redeployed the package, this entire ~140 MB artifact will get uploaded. This was time consuming and irritating but seemed solvable.
+
 
 
 
