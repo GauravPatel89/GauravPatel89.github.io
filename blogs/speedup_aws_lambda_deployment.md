@@ -102,9 +102,24 @@ Layer deployment through this requires us to upload layer contents as zip file. 
  
  If we look carefully serverless smartly tackles this issue as shown below.
  
- *****XX graphics .requirements->package.zip->[Lambda(unzip package.zip->unzip .requirements.zip
+ *****XX graphics .requirements->package.zip->[Lambda(unzip package.zip->unzip .requirements.zip**
+ 
+ It puts .requirement.zip under another deployment zip file and when lambda function is triggerred this **.requirements.zip** file is unzipped and its path is added to the system path. 
+ 
  
  So why not replicate Serverless's solution. 
+ 
+ We already have python packages inside **.requirements.zip**. lets put this under another zip file named say **package.zip**. 
+ 
+ Now try Lambda Layer creation through GUI.
+ 
+ *******XXX Image about successful lambda layer creation********
+ 
+ Now lets try and use this layer. 
+ 
+ Create simple serverless package
+ 
+ *******XXXX
  
 
 
