@@ -115,11 +115,30 @@ Layer deployment through this requires us to upload layer contents as zip file. 
  
  *******XXX Image about successful lambda layer creation********
  
+ So our layer is now created. Not down the layer ARN.
+ 
  Now lets try and use this layer. 
  
  Create simple serverless package
  
- *******XXXX
+               serverless create --template aws-python3 --path example-use-lambda-layer
+               
+Edit **serverless.yml**               
+ 
+ *******XXXX edited serverless.yml image
+ 
+ As shown above we have mentioned ARN of our deployed layer to be used with our example lambda function. 
+ 
+ Now we know whenever our Lambda function is triggered **.requirements.zip** from our layer will be copied into /opt directory of lambda function. We must unzip it and add its path to the system path so that we can make use of these python packages. 
+ 
+ Edit **handler.py**
+ 
+ ****Image of handler.py with unzip code***
+ 
+ to check whether PyTorch and torchvision packages are available we simply include following lines.
+ 
+                import torch
+                import torchvision
  
 
 
