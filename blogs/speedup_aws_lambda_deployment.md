@@ -50,7 +50,7 @@ Edit serverless.yml file for necessary AWS S3 configurations. Add configuration 
 5. Deploy package  
 Deploy your package using following. 
 
-      servrless deploy
+        serverless deploy
       
 On executing this command serverless will take a AWS Lambda compatible docker image, 'pip' install python packages mentioned in 'requirements.txt' and compress these into a package **.requirements.zip** then again compress this as part of another anothe zip file containing other necessary package files like handler.py. It also adds a file in your deployment package **unzip_requirements.py**. This file is executed at the beginning of your Lambda function to unzip the compressed python packages in **.requirements.zip** into user directory and adds its path into system path. Finally serverless will deploy your package onto AWS lambda and show its url. 
 
@@ -58,6 +58,54 @@ On executing this command serverless will take a AWS Lambda compatible docker im
 
 Although serverless framework made deployment task very easy for us but we faced one irritating issue.  Most of our assignment deployments were on PyTorch framework, so in all of our deployments we were using PyTorch and torchvision packages. Now with just these two packages (and their dependencies) as part of lambda deployment, the deployment package size was coming out to be ~140 MB. Irritating part was each time there is any change in any of the file and we redeployed the package, this entire ~140 MB artifact will get uploaded. This was time consuming and irritating but seemed solvable.
 
+****** Include image with zip size 142MB *****
+
+### The Solution
+AWS Lambda has something called [Lambda Layers](https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html) for precisely this kind of scenarios wherein you can deploy common static dependencies as Lambda Layers and include upto 5 layers in your Lambda function. So when deploying a Lambda function if you link Lambda layers with it, whenever Lambda function is triggered contents of Lambda layers are copied into **/opt** directory of lambda function. This way you can keep static parts of your deployments (in our case PyTorch and torchvision) in lambda layer and  each time deploy just the application code. 
+
+Lets try this!!!
+
+#### Create a Lambda Layer for Static dependencies.
+
+We already have **.requirements.zip** file prepared for us by serverless. This file contains all the necessary python packages required in our Lambda function.
+
+*Note: You can generate just the deployment package in serverless using command **serverless package**. Package thus generated will be available under .serverless directory. **.requirements.zip** package containing python dependencies will be available in your package directory itself. (You may have to enable viewing hidden file to see these files under linux)*
+
+Easiest way to create basic Lambda Layer is through GUI as shown below.
+
+*****XXXXX  Include picture showing lambda layer creation Page***** 
+
+Layer deployment through this requires us to upload layer contents as zip file. But as shown, for zip files greater than 10MB uploading through S3 is preferred. So first create a bucket on AWS S3 and upload .requirements.zip file
+
+*****XXXXX  Include picture showing AWS S3 bucket and zip file***** 
+
+ Now we can feed the AWS S3 url of uploaded file for Lambda Layer creation
+ 
+ *****XXXXX  Include picture showing lambda layer creation***** 
+ 
+ Select supported runtimes
+ Click create.
+ 
+ *****XXX Picture about failure to create lambda layer******
+ 
+ **What??!! that failed**  
+ 
+ It says package size should be less than **262144000 bytes** but our .requirements.zip was ~140MB. What happened??
+ 
+ Catch here is when we create Lambda Layer, it unzips the zip file provided by us. So when we provided S3 url of .requirements.zip file, it downloaded and unzipped it and rightly so unzipped size is far greater than **262144000 bytes**.
+ 
+ 
+ ******XXX Picture about actual size of .requirements.zip when unzipped***.
+ 
+ Hey!! but then how come **serverless** is able to do it? For Lambda functions also we have size limit of **262144000 bytes**. 
+ 
+ 
+ If we look carefully serverless smartly tackles this issue as shown below.
+ 
+ *****XX graphics .requirements->package.zip->[Lambda(unzip package.zip->unzip .requirements.zip
+ 
+ So why not replicate Serverless's solution. 
+ 
 
 
 
