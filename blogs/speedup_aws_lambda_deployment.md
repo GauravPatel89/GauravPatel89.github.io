@@ -208,7 +208,29 @@ Now we will use Serverless to deploy our deployment package as Lambda Layer
  
  
  #### Develop example Lambda function utilizing our Lambda Layer
- Now will make use of deployed
+ Now will make use of deployed Lambda layer in a example Lambda function.
+ 
+ 
+* Create an empty Serverless package 
+        
+          serverless create --template aws-python3 --path gp-pytorch-layer-test
+          
+* Add a file **unzip_requirements.py** for unzipping requirements.zip file and adding into system path
+
+*** unzip_requirements.py****** file
+
+* Edit handler.py
+In the first few lines we are import **unzip_requirements.zip** this will ensure that all the python packages from Lambda Layer have been imported and ready for use in our application. To test packages we will just import torch,torchvision and Pillow packages and print their version. 
+
+*****Handler.py
+
+* Edit serverless.yml
+
+* Deploy Lambda function
+
+        serverless deploy
+        
+***Image showing size of deployment package        
  
  
  
