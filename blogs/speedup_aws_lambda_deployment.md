@@ -151,9 +151,14 @@ So our approach works. But this procedure doesn't look well structured. Lets do 
 Our solution will consist of 3 steps.
 1. Create deployment package
 2. Create Lambda Layer
-3. Devlop ecample Lambda function utilizing our Lambda Layer
+3. Develop example Lambda function utilizing our Lambda Layer
 
- 
+Here we go...
+
+#### 1. Create Deployment Package
+In this step we create deployed zip file containing python packages we want to deploy on our AWS Lambda Layer. Steps are as follows.
+
+  a. 
 
 
 
