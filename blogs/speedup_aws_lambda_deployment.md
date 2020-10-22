@@ -156,11 +156,64 @@ Our solution will consist of 3 steps.
 Here we go...
 
 #### 1. Create Deployment Package
-In this step we create deployed zip file containing python packages we want to deploy on our AWS Lambda Layer. Steps are as follows.
+In this step we create deployed zip file containing python packages we want to deploy on our AWS Lambda Layer. Steps are as follows.  
 
-  a. 
+  * Create an empty Serverless package 
+        
+          serverless create --template aws-python3 --path gp-pytorch-dependency-package
+                
+  * Install serverless-python-requirements plugin in our package
+  
+          cd gp-pytorch-dependency-package
+          serverless plugin install -n serverless-python-requirements
+
+  * Add requirements.txt file mentioning required python packages
+          
+     ****Requirements.txt*****
+
+  * Edit serverless.yml file to configure package creation
+  
+     **** serverless.yml****
+     
+  * create package
+            
+         serverless package
+         
+  * locate .requirements.zip file. Rename it to requirements.txt and zip it to create another zip file named **'torchLayerPackages.zip'**
+  
+         mv .requirements.zip requirements.zip
+         zip torchLayerPackages.zip requirements.zip
+         
+Now our deployment package is ready
 
 
+#### 2. Create Lambda Layer
+Now we will use Serverless to deploy our deployment package as Lambda Layer
+
+* Create an empty Serverless package 
+        
+          serverless create --template aws-python3 --path gp-pytorch-lambda-layer
+          
+* Edit serverless.yml file
+        
+   *** serverless.yml file view***
+   
+* Deploy layer
+
+        serverless deploy
+        
+ ****deployment image**  
+ 
+ The layer we have deployed above has pytorch 1.5.1, torch vision 0.6.1, Pillow and its dependencies. We have made this layer global so anyone with its ARN can use it. How to use it in your application is shown in next step.
+ 
+ 
+ #### Develop example Lambda function utilizing our Lambda Layer
+ Now will make use of deployed
+ 
+ 
+ 
+ 
+         
 
 
 
