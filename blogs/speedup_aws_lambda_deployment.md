@@ -139,6 +139,20 @@ Edit **serverless.yml**
  
                 import torch
                 import torchvision
+                
+If lambda function is execured successfully, we will get back 'event' body as reply. 
+
+*****Image of insomnia showing reply msg
+voila!!!! It worked. 
+
+So our approach works. But this procedure doesn't look well structured. Lets do it in systematic manner.
+
+### Final solution
+Our solution will consist of 3 steps.
+1. Create deployment package
+2. Create Lambda Layer
+3. Devlop ecample Lambda function utilizing our Lambda Layer
+
  
 
 
